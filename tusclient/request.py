@@ -1,5 +1,7 @@
+import platform
 import pycurl
 import six
+from six.moves.urllib.parse import urlparse
 
 from tusclient.exceptions import TusUploadFailed
 
@@ -40,6 +42,11 @@ class TusRequest(object):
         headers = ["upload-offset: {}".format(uploader.offset),
                    "Content-Type: application/offset+octet-stream"] + uploader.headers_as_list
         self.handle.setopt(pycurl.HTTPHEADER, headers)
+
+        if platform.system() == 'Windows' and \
+                urlparse(uploader.url).scheme == 'https' and \
+                uploader.pycurl_cainfo is not None:
+            self.handle.setopt(pycurl.CAINFO, uploader.pycurl_cainfo)
 
     def _prepare_response_header(self, header_line):
         # prepares response header and adds it to 'response_headers'

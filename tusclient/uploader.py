@@ -83,6 +83,7 @@ class Uploader(object):
         if url is None and client is None:
             raise ValueError("Either 'url' or 'client' cannot be None.")
 
+        self.pycurl_cainfo = None
         self.file_path = file_path
         self.file_stream = file_stream
         self.stop_at = self.file_size
